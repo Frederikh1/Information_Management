@@ -1,0 +1,21 @@
+
+*.jar
+*.db
+*.id
+*.names
+*.labels
+*.arrays
+*.ini
+data/*
+logs/*
+plugins/*
+mysql-data/*
+import/*
+!data/.gitkeep
+!logs/.gitkeep
+!plugins/.gitkeep
+!mysql-data/.gitkeep
+!import/.gitkeep
+/Data Integration/Python Scripts/__pycache__
+/data/databases
+*.pyc

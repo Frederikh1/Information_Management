@@ -1,0 +1,14 @@
+{
+    "connector.class": "streams.kafka.connect.source.Neo4jSourceConnector",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "name": "Neo4jSourceConnectorJSONString",
+    "neo4j.authentication.basic.password": "password",
+    "neo4j.authentication.basic.username": "neo4j",
+    "neo4j.server.uri": "bolt://neo4j:7687",
+    "neo4j.source.query": "match (node)-[in:IN_CAT]->(category:Class)--(rel:OntoBridge) match (to:Class)<-[:RANGE]-(rel)-[:DOMAIN]->(from:Class) MATCH (classes:Class)--(rel) WHERE classes.uri<>category.uri AND node._lastModified > $lastCheck return node, in, category, rel, classes as compare",
+    "neo4j.source.type": "QUERY",
+    "neo4j.streaming.from": "LAST_COMMITTED",
+    "neo4j.streaming.poll.interval.msecs": "5000",
+    "topic": "test_topic",
+    "value.converter": "org.apache.kafka.connect.storage.StringConverter"
+}

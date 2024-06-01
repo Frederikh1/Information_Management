@@ -1,0 +1,6 @@
+{
+    "ontology_url": "https://raw.githubusercontent.com/Frederikh1/cim_ontology/main/cim_without_package_and_stereotype.ttl",
+    "ontology_format": "turtle",
+    "mapping_file": "CIM"
+  }
+  

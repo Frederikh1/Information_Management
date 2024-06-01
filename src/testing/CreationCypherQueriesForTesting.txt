@@ -1,0 +1,108 @@
+// Cim bay creation 
+Merge (t:Bay{
+  mRID: "2f52e307-06b8-4cd4-81dc-753662d94d2f", 
+  aliasName: "HDB-01", 
+  description: "Primaer baas til distribution af stroem i hovedsektoren.", 
+  name: "Hoveddistributionsbaas", 
+  bayEnergyMeasFlag: true, 
+  bayPowerMeasFlag: true
+})
+with t
+Match (c:Class) WHERE c.uri="http://iec.ch/TC57/CIM-generic#Bay"
+Match (super:VoltageLevel{name:"Aarhus"})
+match (super)-[:Substation]-(sub)
+with t, c, super, sub
+MERGE (t)-[:IN_CAT]->(c)
+Merge (super)<-[:VoltageLevel]-(t)
+Merge (t)<-[:Bays]-(super)
+Merge (sub)<-[:Substation]-(t)
+Merge (sub)-[:Bays]->(t)
+
+// Create CIM BaseVoltage
+Merge (node:BaseVoltage{
+  mRID: "2d435ee5-0443-431a-8554-d9a6f14cd89b", 
+  aliasName: "SpaendingsniveauAarhus", 
+  description: "Spaendingsniveau ved 220V", 
+  name: "Aarhus", 
+  nominalVoltage: "220 V"
+})
+with node
+Match (super:CIM{uri:"http://iec.ch/TC57/CIM-generic#BaseVoltage"})
+//possible relations Match (v:VoltageLevel{name:"Aarhus"})
+// possible relations Match (c:ConductingEquipment{name:"StroemfoerendeUdstyr1"})
+with node, super
+MERGE (node)-[:IN_CAT]->(super)
+//MERGE (node)-[:VoltageLevel]->(v)
+//MERGE (node)<-[:BaseVoltage]-(v)
+//MERGE (node)-[:VoltageLevel]->(c)
+//MERGE (node)<-[:BaseVoltage]-(c)
+
+// Create tVoltage
+MERGE (t:tVoltage{
+  value: "0.22kV"
+})
+
+// iec tBay creation 
+Merge (t:tBay{
+  desc: "Primær bås til distribution af strøm i hovedsektoren.", 
+  name: "Hoveddistributionsbås", 
+  tConductingEquipmentId: "StrømførendeUdstyr1"
+})
+with t
+Match (c:Class) WHERE c.uri="http://www.semanticweb.org/information-management/mapping-cutout/iec-61850#tBay"
+Match (super:tVoltageLevel{name:"Århus"})
+with t, c, super
+MERGE (t)-[:IN_CAT]->(c)
+Merge (super)-[:tBay]->(t)
+
+// Substation creation
+Merge (t:Substation{
+  mRID: "93579d3f-84ce-47b8-8c9d-9aea02a0d346", 
+  aliasName: "regionalnetAarhus", 
+  description: "Hovedstyrings- og relaeanlaeg til regionalnet, Aarhus", 
+  name: "Aarhus"
+})
+with t
+Match (c:Class) WHERE c.uri="http://iec.ch/TC57/CIM-generic#Substation"
+with t, c
+MERGE (t)-[:IN_CAT]->(c)
+
+//tSubstation creation
+Merge (t:tSubstation{
+  desc: "Hovedstyrings- og relæanlæg til regionalnet, Århus", 
+  name: "Århus"
+})
+with t
+Match (c:Class) WHERE c.uri="http://www.semanticweb.org/information-management/mapping-cutout/iec-61850#tSubstation"
+with t, c
+MERGE (t)-[:IN_CAT]->(c)
+
+// tVoltagelevel creation to substation
+Merge (t:tVoltageLevel{
+  desc: "Spændingsniveau ved 0.22kV", 
+  name: "Århus", 
+  tVoltageId: "0.22kV", 
+  tBayId: "Hoveddistributionsbås"
+})
+with t
+Match (c:Class) WHERE c.uri="http://www.semanticweb.org/information-management/mapping-cutout/iec-61850#tVoltageLevel"
+Match (super:tSubstation{name:"Århus"})
+with t, c, super
+MERGE (t)-[:IN_CAT]->(c)
+Merge (super)-[:tVoltageLevel]->(t)
+
+// Voltagelevel creation to substation
+Merge (t:VoltageLevel{
+  mRID: "7c52dadb-f0d8-478f-bab9-e1d353c7fe86", 
+  aliasName: "SpaendingsniveauAarhus", 
+  description: "Spaendingsniveau ved 220V", 
+  name: "Aarhus", 
+  highVoltageLimit: 132, 
+  lowVoltageLimit: 1000
+})
+with t
+Match (c:Class) WHERE c.uri="http://iec.ch/TC57/CIM-generic#VoltageLevel"
+Match (super:Substation{name:"Aarhus"})
+with t, c, super
+MERGE (t)-[:IN_CAT]->(c)
+Merge (super)<-[:Substation]-(t)
